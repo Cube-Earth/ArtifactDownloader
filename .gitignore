@@ -1,0 +1,10 @@
+.DS_Store
+.gradle/
+.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+Servers/
+Root/*/bin/
+Root/*/target/
+build/
+*/build/
