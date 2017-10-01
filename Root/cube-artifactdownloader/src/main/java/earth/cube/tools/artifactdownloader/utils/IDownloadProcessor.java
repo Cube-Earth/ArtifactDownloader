@@ -1,4 +1,4 @@
-package earth.cube.tools.artifactdownloader;
+package earth.cube.tools.artifactdownloader.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

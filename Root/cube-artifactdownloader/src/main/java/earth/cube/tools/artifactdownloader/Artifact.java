@@ -14,6 +14,8 @@ public class Artifact {
 	private String _sVersion;
 	private String _sPackaging = "jar";
 	private Repository _repository;
+	private boolean _bSnapshot;
+	private String _sSnapshotId;
 	
 	public Artifact() {
 	}
@@ -32,6 +34,7 @@ public class Artifact {
 		_sGroupId = saId[0];
 		_sArtifactId = saId[1];
 		_sVersion = saId[2];
+		_bSnapshot = _sVersion.endsWith("-SNAPSHOT");
 		if(saId.length > 3)
 			_sPackaging = saId[3];
 	}
@@ -46,6 +49,7 @@ public class Artifact {
 
 	public void setVersion(String sVersion) {
 		_sVersion = sVersion;
+		_bSnapshot = _sVersion.endsWith("-SNAPSHOT");
 	}
 	
 	public void setPackaging (String sPackaging) {
@@ -64,6 +68,22 @@ public class Artifact {
 		return _sVersion;
 	}
 	
+	public boolean isSnapshot() {
+		return _bSnapshot;
+	}
+	
+	public void setSnapshotId(String sId) {
+		_sSnapshotId = sId;
+	}
+	
+	public String getSnapshotId() {
+		return _sSnapshotId;
+	}
+
+	public String getFileVersion() {
+		return _bSnapshot ? _sVersion.replaceFirst("-SNAPSHOT$", "-" + _sSnapshotId) : _sVersion;
+	}
+	
 	public String getPackaging() {
 		return _sPackaging;
 	}
@@ -72,6 +92,7 @@ public class Artifact {
 		_sGroupId = XmlUtil.getText(config, "groupId", null);
 		_sArtifactId = XmlUtil.getText(config, "artifactId", null);
 		_sVersion = XmlUtil.getText(config, "version", null);
+		_bSnapshot = _sVersion.endsWith("-SNAPSHOT");
 		_sPackaging = XmlUtil.getText(config, "packaging", "jar");
 	}
 	

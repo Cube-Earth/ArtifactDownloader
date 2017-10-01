@@ -47,7 +47,8 @@ public class Downloader {
 	private Project challenge(Artifact artifact) throws IOException {
 		for(Repository repository : new ArrayList<>(_repositories)) {
 			Project project = repository.loadProject(artifact);
-			return project;
+			if(project != null)
+				return project;
 		}
 		throw new IllegalStateException("Artifact '" + artifact + "' could not be found!");
 	}

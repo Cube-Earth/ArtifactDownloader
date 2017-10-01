@@ -57,4 +57,21 @@ public class DownloaderTest {
 		
 	}
 
+	@Test
+	public void test_2() throws IOException {
+		cleanTargetDir();
+		
+		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "earth.cube.logkeeper:cube-logkeeper-loggers-delegates:1.0-SNAPSHOT" });
+		
+		String[] saExpectedFileNames = { 
+			"cube-logkeeper-loggers-delegates-1.0-SNAPSHOT.jar"
+		};
+		
+		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
+		
+		for(int i = 0; i < saExpectedFileNames.length; i++) {
+			checkFile(saExpectedFileNames[i]);
+		}
+		
+	}
 }

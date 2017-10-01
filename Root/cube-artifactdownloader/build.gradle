@@ -1,0 +1,28 @@
+// call 'gradle uploadArchives' to upload this artifact to github
+
+apply plugin: 'earth.cube.github'
+
+jar {
+  manifest {
+    attributes(
+      'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+      'Main-Class': 'earth.cube.tools.artifactdownloader.Downloader'
+    )
+  }
+}
+
+version "1.0.0"
+
+github {
+	password = github_pwd
+	
+	release {
+		tagName = "1.0"
+		description = "Arifact Downloader"
+	}
+
+	asset {
+		overwrite = true
+	}
+}
+
