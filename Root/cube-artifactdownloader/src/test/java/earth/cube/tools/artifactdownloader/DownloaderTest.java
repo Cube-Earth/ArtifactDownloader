@@ -4,11 +4,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class DownloaderTest {
 	
 	private File _targetDir;
+	
+	@Before
+	public void printSeparator() {
+		System.out.println("===============");
+	}
 
 	private void cleanTargetDir() {
 		_targetDir = new File("./bin/tests/downloads");
@@ -18,6 +24,18 @@ public class DownloaderTest {
 		else
 			_targetDir.mkdirs();
 		Assert.assertEquals(0, _targetDir.list().length);
+	}
+	
+	private String getDownloadedFiles() {
+		StringBuilder sb = new StringBuilder();
+		_targetDir = new File("./bin/tests/downloads");
+		if(_targetDir.exists())
+			for(File file : _targetDir.listFiles())
+				if(sb.length() == 0)
+					sb.append(file.getName());
+				else
+					sb.append(", ").append(file.getName());
+		return sb.length() == 0 ? "-none-" : sb.toString();
 	}
 	
 	private void checkFile(String sFileName) {
@@ -74,4 +92,65 @@ public class DownloaderTest {
 		}
 		
 	}
+	
+	@Test
+	public void test_3() throws IOException {
+		cleanTargetDir();
+		
+		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "earth.cube.logkeeper:cube-logkeeper-loggers:1.0-SNAPSHOT" });
+		
+		String[] saExpectedFileNames = { 
+		    "commons-lang3-3.4.jar",
+		    "cube-logkeeper-core-1.0-SNAPSHOT.jar",
+		    "cube-logkeeper-loggers-1.0-SNAPSHOT.jar",
+		    "jackson-annotations-2.8.0.jar",
+		    "jackson-core-2.1.3.jar",
+		    "jackson-databind-2.8.0.jar",
+		    "jackson-dataformat-yaml-2.1.3.jar",
+		    "jeromq-0.3.4.jar"
+		};
+		
+		Assert.assertEquals(getDownloadedFiles(), saExpectedFileNames.length, _targetDir.list().length);
+		
+		for(int i = 0; i < saExpectedFileNames.length; i++) {
+			checkFile(saExpectedFileNames[i]);
+		}
+		
+	}
+	
+
+	@Test
+	public void test_4() throws IOException {
+		cleanTargetDir();
+		
+		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "org.apache.logging.log4j:log4j-1.2-api:2.1" });
+		
+		String[] saExpectedFileNames = { 
+				"disruptor-3.3.0.jar",
+				"jackson-annotations-2.4.0.jar",
+				"jackson-core-2.4.2.jar",
+				"jackson-databind-2.4.2.jar",
+				"jackson-dataformat-xml-2.4.2.jar",
+				"jackson-dataformat-yaml-2.4.2.jar",
+				"jackson-module-jaxb-annotations-2.4.2.jar",
+				"jansi-1.11.jar",
+				"javax.mail-1.5.2.jar",
+				"javax.persistence-2.1.0.jar",
+				"log4j-1.2-api-2.1.jar",
+				"log4j-api-2.1.jar",
+				"log4j-core-2.1.jar",
+				"stax-api-1.0-2.jar",
+				"stax2-api-3.1.4.jar",
+				"woodstox-core-asl-4.3.0.jar",
+		};
+		
+		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
+		
+		for(int i = 0; i < saExpectedFileNames.length; i++) {
+			checkFile(saExpectedFileNames[i]);
+		}
+		
+	}
+
+	
 }

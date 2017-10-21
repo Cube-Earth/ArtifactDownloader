@@ -60,6 +60,7 @@ public class Repository {
 		}
 		
 		URL url = buildArtifactUrl(artifact, "pom");
+		System.out.println("   Analyzing " + url + " ...");
 		Project project = HttpUtil.download(url, new IDownloadProcessor<Project>() {
 
 			@Override

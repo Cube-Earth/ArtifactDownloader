@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.w3c.dom.Element;
 
+import earth.cube.tools.artifactdownloader.utils.StringResolver;
 import earth.cube.tools.artifactdownloader.utils.XmlUtil;
 
 public class Artifact {
@@ -20,9 +21,13 @@ public class Artifact {
 	public Artifact() {
 	}
 
-	public Artifact(Repository repository, Element config) {
+	public Artifact(Repository repository, Element config, StringResolver resolver, Artifact parent) throws IOException {
 		_repository = repository;
-		read(config);
+		if(parent != null) {
+			_sGroupId = parent.getGroupId();
+			_sVersion = parent.getVersion();
+		}
+		read(config, resolver);
 	}
 
 	public Artifact(String sId) {
@@ -68,6 +73,10 @@ public class Artifact {
 		return _sVersion;
 	}
 	
+	public boolean isComplete() {
+		return _sGroupId != null && _sGroupId.length() != 0 && _sArtifactId != null && _sArtifactId.length() != 0 && _sVersion != null && _sVersion.length() != 0;
+	}
+	
 	public boolean isSnapshot() {
 		return _bSnapshot;
 	}
@@ -85,15 +94,15 @@ public class Artifact {
 	}
 	
 	public String getPackaging() {
-		return _sPackaging;
+		return _sPackaging.equalsIgnoreCase("bundle") ? "jar" : _sPackaging;
 	}
 	
-	public void read(Element config) {
-		_sGroupId = XmlUtil.getText(config, "groupId", null);
-		_sArtifactId = XmlUtil.getText(config, "artifactId", null);
-		_sVersion = XmlUtil.getText(config, "version", null);
-		_bSnapshot = _sVersion.endsWith("-SNAPSHOT");
-		_sPackaging = XmlUtil.getText(config, "packaging", "jar");
+	public void read(Element config, StringResolver resolver) throws IOException {			
+		_sGroupId = resolver.resolve(XmlUtil.getText(config, "groupId", _sGroupId));
+		_sArtifactId = resolver.resolve(XmlUtil.getText(config, "artifactId", null));
+		_sVersion = resolver.resolve(XmlUtil.getText(config, "version", _sVersion));
+		_bSnapshot = _sVersion == null ? false :  _sVersion.endsWith("-SNAPSHOT");
+		_sPackaging = resolver.resolve(XmlUtil.getText(config, "packaging", "jar"));
 	}
 	
 	public void setRepository(Repository repository) {
@@ -105,7 +114,7 @@ public class Artifact {
 	}
 	
 	public String getFileName() {
-		return String.format("%s-%s.%s", _sArtifactId, _sVersion, _sPackaging);
+		return String.format("%s-%s.%s", _sArtifactId, _sVersion, _sPackaging.equalsIgnoreCase("bundle") ? "jar" : _sPackaging);
 	}
 	
 	public void download(File targetDir) throws IOException {
@@ -116,7 +125,7 @@ public class Artifact {
 	
 	@Override
 	public int hashCode() {
-		return (_sGroupId + '~' + _sArtifactId + '~' + _sVersion).hashCode();
+		return (_sGroupId + '~' + _sArtifactId).hashCode();
 	}
 	
 	@Override
@@ -124,7 +133,7 @@ public class Artifact {
 		if(!(o instanceof Artifact))
 			return false;
 		Artifact a = (Artifact) o;
-		return _sGroupId.equals(a.getGroupId()) && _sArtifactId.equals(a.getArtifactId()) && _sVersion.equals(a.getVersion());
+		return _sGroupId.equals(a.getGroupId()) && _sArtifactId.equals(a.getArtifactId());
 	}
 	
 	@Override
