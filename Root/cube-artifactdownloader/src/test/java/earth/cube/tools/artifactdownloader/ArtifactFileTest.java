@@ -92,4 +92,13 @@ public class ArtifactFileTest {
 		Assert.assertEquals(new ArtifactFile("artifact.jar"), f);
 	}
 
+	@Test
+	public void test_getId_1() {
+		Assert.assertEquals("artifact:1.0-SNAPSHOT", new ArtifactFile("artifact-1.0-SNAPSHOT.jar").getId());
+		Assert.assertEquals("artifact:1.0.1", new ArtifactFile("artifact-1.0.1.jar").getId());
+		Assert.assertEquals("artifact:1.0.RELEASE", new ArtifactFile("artifact-1.0.RELEASE.jar").getId());
+		Assert.assertEquals("artifact-2.1:1.0.RELEASE", new ArtifactFile("artifact-2.1-1.0.RELEASE.jar").getId());
+		Assert.assertEquals("artifact-2.1-api:1.0.RELEASE", new ArtifactFile("artifact-2.1-api-1.0.RELEASE.jar").getId());
+	}
+
 }

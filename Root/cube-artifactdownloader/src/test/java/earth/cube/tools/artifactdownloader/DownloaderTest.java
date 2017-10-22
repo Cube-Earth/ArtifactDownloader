@@ -152,5 +152,40 @@ public class DownloaderTest {
 		
 	}
 
+	@Test
+	public void test_clean_1() throws IOException {
+		cleanTargetDir();
+		
+		String[] saActualFileNames = { 
+				"artifact2.jar",
+				"artifact.jar",
+				"artifact-1.jar",
+				"artifact-1.1.jar",
+				"artifact-1.1.2-SNAPSHOT.jar",
+				"artifact-1.1.RELEASE.jar",
+		};
+		
+		for(String sFileName : saActualFileNames) {
+			File f = new File(_targetDir, sFileName);
+			f.createNewFile();
+			Assert.assertTrue(f.exists());
+		}
+
+		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "-" });
+
+		String[] saExpectedFileNames = { 
+				"artifact2.jar",
+				"artifact-1.1.2.RELEASE.jar",
+		};
+		
+		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
+		
+		for(int i = 0; i < saExpectedFileNames.length; i++) {
+			File f = new File(_targetDir, saExpectedFileNames[i]);
+			f.createNewFile();
+			Assert.assertTrue(f.exists());
+		}
+		
+	}
 	
 }

@@ -91,6 +91,40 @@ public class Downloader {
 			}
 		}
 	}
+	
+	private void cleanJars() {
+		System.out.println("Cleaning JAR files ...");
+		Map<ArtifactFile,ArtifactFile> jars = new HashMap<>();
+		for(File file : _targetDir.listFiles()) {
+			if(file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+				ArtifactFile a1 = new ArtifactFile(file);
+				ArtifactFile a2 = jars.get(a1);
+				if(a2 != null) {
+					Version v1 = new Version(a1.getVersion());
+					Version v2 = new Version(a2.getVersion());
+					switch(v1.compareTo(v2)) {
+						case -1:
+							System.out.println(String.format("   removing file '%s' (conflicts with '%s') ...", a1.getFileName(), a2.getFileName()));
+							a1.getFile().delete();
+							break;
+
+						case +1:
+							System.out.println(String.format("   removing file '%s' (conflicts with '%s') ...", a2.getFileName(), a1.getFileName()));
+							a2.getFile().delete();
+							jars.put(a1, a1);
+							break;
+							
+						case 0:
+							System.out.println(String.format("   removing file '%s' (conflicts with '%s') ...", a1.getFileName(), a2.getFileName()));
+							a1.getFile().delete();
+							break;
+					}
+				}
+				else
+					jars.put(a1, a1);
+			}
+		}
+	}
 
 	public void execute() throws IOException {
 		loadRepositories();
@@ -99,10 +133,13 @@ public class Downloader {
 			loadProvided();
 		
 		for(String sId : _ids) {
-			process(new Artifact(sId));
+			if("-".equals(sId))
+				cleanJars();
+			else
+				process(new Artifact(sId));
 		}
 	}
-	
+
 	public static void main(String[] saArgs) throws IOException {
 		Downloader runner = new Downloader();
 		runner.setTargetDir(new File(saArgs[0]));
