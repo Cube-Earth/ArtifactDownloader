@@ -48,19 +48,25 @@ public class Downloader {
 		_ids.add(sId);
 	}
 	
-	private Project challenge(Artifact artifact) throws IOException {
+	private Project challenge(Artifact artifact, boolean bDrillDown) throws IOException {
 		for(Repository repository : new ArrayList<>(_repositories)) {
-			Project project = repository.loadProject(artifact);
+			Project project = repository.loadProject(artifact, bDrillDown);
 			if(project != null)
 				return project;
 		}
-		throw new IllegalStateException("Artifact '" + artifact + "' could not be found!");
+//		throw new IllegalStateException("Artifact '" + artifact + "' could not be found!");
+		return null;
 	}
 
 	private void process(Artifact artifact) throws IOException {
 		if(_artifacts.contains(artifact))
 			return;
-		Project project = challenge(artifact);
+		Project project = challenge(artifact, true);
+		if(project == null) {
+			_artifacts.add(artifact);
+			return;
+		}
+		
 		artifact = project.getArtifact();
 		_artifacts.add(artifact);
 		System.out.println(String.format("Downloading '%s' from %s ...", artifact, artifact.getRepository()));

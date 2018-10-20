@@ -15,7 +15,7 @@ public class XmlUtil {
 
 	public static String getText(Element parent, String sXPath, String sDefault) {
 		Node node = selectSingleNode(parent, sXPath, false);
-		return node == null ? sDefault : node.getTextContent();
+		return node == null ? sDefault : node.getTextContent().trim();
 	}
 	
 	protected static Object evaluate(Object context, String sXPath, QName returnType) {

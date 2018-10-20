@@ -1,1 +1,1 @@
-include ':cube-artifactdownloader'
+include ':cube-artifactdownloader', ':Test'

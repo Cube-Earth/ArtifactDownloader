@@ -51,7 +51,7 @@ public class Repository {
 		});
 	}
  	
-	public Project loadProject(Artifact artifact) throws IOException {
+	public Project loadProject(Artifact artifact, final boolean bDrillDown) throws IOException {
 		if(artifact.isSnapshot()) {
 			MavenMetadata metadata = loadMetadata(artifact);
 			if(metadata == null)
@@ -65,14 +65,18 @@ public class Repository {
 
 			@Override
 			public Project processDownload(InputStream in) throws IOException {
-				return new Project(Repository.this, in);
+				return new Project(Repository.this, in, bDrillDown);
 			}
 		});
-		project.getArtifact().setSnapshotId(artifact.getSnapshotId());
+		if(project != null)
+			project.getArtifact().setSnapshotId(artifact.getSnapshotId());
 		return project;
 	}
 	
 	public boolean downloadArtifact(Artifact artifact, File targetDir) throws IOException {
+		if(!"jar".equals(artifact.getPackaging()))
+			return false;
+		
 		File downloadedFile = new File(targetDir, artifact.getFileName());
 		final File tmpFile = new File(targetDir, artifact.getFileName() + ".partial");
 		URL url = buildArtifactUrl(artifact, artifact.getPackaging());

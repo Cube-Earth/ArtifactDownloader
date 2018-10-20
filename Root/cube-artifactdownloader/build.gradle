@@ -11,13 +11,13 @@ jar {
   }
 }
 
-version "1.0.0"
+version "1.1.0"
 
 github {
 	password = github_pwd
 	
 	release {
-		tagName = "1.0"
+		tagName = "1.1"
 		description = "Arifact Downloader"
 	}
 

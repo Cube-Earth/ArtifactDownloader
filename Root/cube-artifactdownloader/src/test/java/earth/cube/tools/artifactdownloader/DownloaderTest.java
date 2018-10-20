@@ -38,13 +38,14 @@ public class DownloaderTest {
 		return sb.length() == 0 ? "-none-" : sb.toString();
 	}
 	
-	private void checkFile(String sFileName) {
+	private void checkFile(int i, String sFileName) {
 		File file = new File(_targetDir, sFileName);
-		Assert.assertTrue(sFileName, file.exists());
-		Assert.assertTrue(sFileName, file.isFile());
-		Assert.assertTrue(sFileName, file.length() > 1000);
+		Assert.assertTrue(i + ": " + sFileName, file.exists());
+		Assert.assertTrue(i + ": " + sFileName, file.isFile());
+		Assert.assertTrue(i + ": " + sFileName, file.length() > 1000);
 	}
 	
+
 	@Test
 	public void test_1() throws IOException {
 		cleanTargetDir();
@@ -70,7 +71,7 @@ public class DownloaderTest {
 		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
 		
 		for(int i = 0; i < saExpectedFileNames.length; i++) {
-			checkFile(saExpectedFileNames[i]);
+			checkFile(i, saExpectedFileNames[i]);
 		}
 		
 	}
@@ -88,7 +89,7 @@ public class DownloaderTest {
 		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
 		
 		for(int i = 0; i < saExpectedFileNames.length; i++) {
-			checkFile(saExpectedFileNames[i]);
+			checkFile(i, saExpectedFileNames[i]);
 		}
 		
 	}
@@ -104,7 +105,7 @@ public class DownloaderTest {
 		    "cube-logkeeper-core-1.0-SNAPSHOT.jar",
 		    "cube-logkeeper-loggers-1.0-SNAPSHOT.jar",
 		    "jackson-annotations-2.8.0.jar",
-		    "jackson-core-2.1.3.jar",
+		    "jackson-core-2.8.0.jar",
 		    "jackson-databind-2.8.0.jar",
 		    "jackson-dataformat-yaml-2.1.3.jar",
 		    "jeromq-0.3.4.jar"
@@ -113,7 +114,7 @@ public class DownloaderTest {
 		Assert.assertEquals(getDownloadedFiles(), saExpectedFileNames.length, _targetDir.list().length);
 		
 		for(int i = 0; i < saExpectedFileNames.length; i++) {
-			checkFile(saExpectedFileNames[i]);
+			checkFile(i, saExpectedFileNames[i]);
 		}
 		
 	}
@@ -123,35 +124,21 @@ public class DownloaderTest {
 	public void test_4() throws IOException {
 		cleanTargetDir();
 		
-		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "org.apache.logging.log4j:log4j-1.2-api:2.1" });
+		Downloader.main(new String[] { _targetDir.getAbsolutePath(), "org.apache.logging.log4j:log4j-api:2.6.2" });
 		
 		String[] saExpectedFileNames = { 
-				"disruptor-3.3.0.jar",
-				"jackson-annotations-2.4.0.jar",
-				"jackson-core-2.4.2.jar",
-				"jackson-databind-2.4.2.jar",
-				"jackson-dataformat-xml-2.4.2.jar",
-				"jackson-dataformat-yaml-2.4.2.jar",
-				"jackson-module-jaxb-annotations-2.4.2.jar",
-				"jansi-1.11.jar",
-				"javax.mail-1.5.2.jar",
-				"javax.persistence-2.1.0.jar",
-				"log4j-1.2-api-2.1.jar",
-				"log4j-api-2.1.jar",
-				"log4j-core-2.1.jar",
-				"stax-api-1.0-2.jar",
-				"stax2-api-3.1.4.jar",
-				"woodstox-core-asl-4.3.0.jar",
+				"log4j-api-2.6.2.jar",
 		};
 		
 		Assert.assertEquals(saExpectedFileNames.length, _targetDir.list().length);
 		
 		for(int i = 0; i < saExpectedFileNames.length; i++) {
-			checkFile(saExpectedFileNames[i]);
+			checkFile(i, saExpectedFileNames[i]);
 		}
 		
 	}
 
+/*
 	@Test
 	public void test_clean_1() throws IOException {
 		cleanTargetDir();
@@ -187,5 +174,6 @@ public class DownloaderTest {
 		}
 		
 	}
+*/
 	
 }
